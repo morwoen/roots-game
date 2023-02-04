@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Follower : MonoBehaviour {
-    public enum FollowerState {
-        AtPlayer,
-        Returning,
-        Charging,
-    }
+    //public enum FollowerState {
+    //    AtPlayer,
+    //    Returning,
+    //    Charging,
+    //}
 
-    [SerializeField] private float atPlayerSpeed = 1;
-    [SerializeField] private float returningSpeed = 1;
-    [SerializeField] private float chargingSpeed = 1;
+    //[SerializeField] private float atPlayerSpeed = 1;
+    //[SerializeField] private float returningSpeed = 1;
+    //[SerializeField] private float chargingSpeed = 1;
 
     [SerializeField] private PlayerManager player;
-    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] public Rigidbody2D rb;
 
-    private FollowerState state = FollowerState.Returning;
+    //private FollowerState state = FollowerState.Returning;
 
-    private void Update() {
-        if (state == FollowerState.AtPlayer) {
-            rb.velocity = atPlayerSpeed * (player.transform.position - transform.position).normalized;
-        } else if (state == FollowerState.Returning) {
-            rb.velocity = returningSpeed * (player.transform.position - transform.position).normalized;
-        } else if (state == FollowerState.Charging) {
-            //rb.velocity = returningSpeed * (player.transform.position - transform.position).normalized;
-        }
-    }
+    //private void Update() {
+    //    if (state == FollowerState.AtPlayer) {
+    //        rb.velocity = atPlayerSpeed * (player.transform.position - transform.position).normalized;
+    //    } else if (state == FollowerState.Returning) {
+    //        rb.velocity = returningSpeed * (player.transform.position - transform.position).normalized;
+    //    } else if (state == FollowerState.Charging) {
+    //        //rb.velocity = returningSpeed * (player.transform.position - transform.position).normalized;
+    //    }
+    //}
 
 }

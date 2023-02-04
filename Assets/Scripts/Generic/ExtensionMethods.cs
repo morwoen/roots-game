@@ -27,6 +27,9 @@ public static class ExtensionMethods {
     public static Vector3 ToV3(this Vector2 value, float y = 0) {
         return new Vector3(value.x, y, value.y);
     }
+    public static Vector3 To2DV3(this Vector2 value, float z = 0) {
+        return new Vector3(value.x, value.y, z);
+    }
 
     public static Vector2 Abs(this Vector2 value) {
         return new Vector2(Mathf.Abs(value.x), Mathf.Abs(value.y));

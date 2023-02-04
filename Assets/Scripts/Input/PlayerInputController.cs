@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 using System.Linq;
+using CooldownManagement;
 
 public class PlayerInputController : MonoBehaviour {
     private InputManager input;
@@ -13,11 +14,12 @@ public class PlayerInputController : MonoBehaviour {
     //public bool Dash { get; private set; }
     //public bool LookBack { get; private set; }
     //public bool Interact { get; private set; }
-    //public bool Attack { get; private set; }
+    public bool Attack { get; private set; }
     public Vector3 Movement { get; private set; }
     public Vector2 LookDirection { get; private set; }
 
     //private Cooldown dashCooldown;
+    private Cooldown attackCooldown;
 
     // Mouse movement transformation into controller input
     private int width, height;
@@ -31,7 +33,7 @@ public class PlayerInputController : MonoBehaviour {
 
         input.Player.Move.performed += OnMove;
         input.Player.Look.performed += OnLook;
-        //input.Player.Attack.performed += OnAttack;
+        input.Player.Attack.performed += OnAttack;
         //input.Player.Dash.performed += OnDash;
         //input.controlSchemeChange += OnControlSchemeChange;
     }
@@ -39,14 +41,14 @@ public class PlayerInputController : MonoBehaviour {
     private void OnDisable() {
         input.Player.Move.performed -= OnMove;
         input.Player.Look.performed -= OnLook;
-        //input.Player.Attack.performed -= OnAttack;
+        input.Player.Attack.performed -= OnAttack;
         //input.Player.Dash.performed -= OnDash;
         //input.Player.OpenPauseMenu.performed -= OpenPauseMenu;
         //input.controlSchemeChange -= OnControlSchemeChange;
 
         Movement = Vector3.zero;
         //Dash = false;
-        //Attack = false;
+        Attack = false;
     }
 
     private void UpdateScreenSizeValues() {
@@ -89,10 +91,20 @@ public class PlayerInputController : MonoBehaviour {
         }
     }
 
-    //void OnAttack(InputAction.CallbackContext ctx) {
-    //    var isPressed = ctx.ReadValueAsButton();
-    //    Attack = isPressed;
-    //}
+    void OnAttack(InputAction.CallbackContext ctx) {
+        var isPressed = ctx.ReadValueAsButton();
+        if (!isPressed) return;
+        Attack = true;
+        attackCooldown?.Stop();
+        attackCooldown = Cooldown.Wait(interactPersistence).OnComplete(() => {
+            Attack = false;
+        });
+    }
+
+    public void AttackPerformed() {
+        Attack = false;
+        attackCooldown?.Stop();
+    }
 
     //void OnDash(InputAction.CallbackContext ctx) {
     //    var isPressed = ctx.ReadValueAsButton();
