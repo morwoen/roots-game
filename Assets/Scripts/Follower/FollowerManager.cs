@@ -69,8 +69,12 @@ public class FollowerManager : MonoBehaviour {
 
     private void Update() {
         if (state == FollowerState.AtPlayer) {
-            var pos = transform.position + input.LookDirection.To2DV3() * directedDistanceFromPlayer;
+            // Move telegraph
+            var angle = Mathf.Atan2(input.LookDirection.y, input.LookDirection.x) * Mathf.Rad2Deg;
+            chargeTelegraph.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
+            // Move followers
+            var pos = transform.position + input.LookDirection.To2DV3() * directedDistanceFromPlayer;
             for (int i = 0; i < followers.Count; i++) {
                 var destination = pos + basePositionOffsets[i % basePositionOffsets.Count];
                 var direction = destination - followers[i].transform.position;
@@ -153,6 +157,8 @@ public class FollowerManager : MonoBehaviour {
                 }
                 break;
         }
+
+        chargeTelegraph.gameObject.SetActive(newState == FollowerState.AtPlayer);
 
         state = newState;
     }
