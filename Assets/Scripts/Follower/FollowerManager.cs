@@ -1,6 +1,7 @@
 using CooldownManagement;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class FollowerManager : MonoBehaviour {
         AtPlayer,
         Returning,
         Charging,
+        Interacting,
     }
 
     [Header("Movement Speeds")]
@@ -26,13 +28,18 @@ public class FollowerManager : MonoBehaviour {
     [SerializeField] private float[] angleOffsets;
     [SerializeField] private float directedDistanceFromPlayer = 1;
 
-    [Header("Attacking")]
+    [Header("Charging")]
     [SerializeField] private float chargeDuration;
     [SerializeField] private float[] chargeDistances;
     private Vector3 chargeDirection;
     private Cooldown chargeTimer;
     private List<Vector3> chargePositionOffsets;
 
+    [Header("Interacting")]
+    [SerializeField] private float spinSpeed = 1;
+    private FollowerInteractable interactable;
+    private float[] interactDistances;
+    private float spinOffset = 0;
 
     [Header("Other")]
     [SerializeField] private PlayerInputController input;
@@ -42,6 +49,11 @@ public class FollowerManager : MonoBehaviour {
     private List<Vector3> basePositionOffsets;
     private FollowerState state = FollowerState.AtPlayer;
 
+    public int ActiveFollowers {
+        get {
+            return followers.Count;
+        }
+    }
 
     private void OnEnable() {
         followers = FindObjectsOfType<Follower>().ToList();
@@ -64,16 +76,12 @@ public class FollowerManager : MonoBehaviour {
 
             if (input.Attack) {
                 input.AttackPerformed();
-                state = FollowerState.Charging;
+                SwitchState(FollowerState.Charging);
                 chargeDirection = input.LookDirection.To2DV3();
                 var point = transform.position + chargeDirection * (chargingSpeed * chargeDuration);
                 chargePositionOffsets = GetLayeredPositionsAround(point, chargeDistances, numberOfFollowers, angleOffsets);
-                Cooldown.Wait(chargeDuration).OnComplete(() => {
-                    state = FollowerState.Returning;
-
-                    Cooldown.Wait(chargeDuration).OnComplete(() => {
-                        state = FollowerState.AtPlayer;
-                    });
+                chargeTimer = Cooldown.Wait(chargeDuration).OnComplete(() => {
+                    SwitchState(FollowerState.Returning);
                 });
             }
         } else if (state == FollowerState.Returning) {
@@ -89,13 +97,44 @@ public class FollowerManager : MonoBehaviour {
                 var direction = chargePositionOffsets[i] - followers[i].transform.position;
                 followers[i].rb.velocity = returningSpeed * (direction.magnitude > 1 ? direction.normalized : direction);
             }
+        } else if (state == FollowerState.Interacting) {
+            if (interactable.shouldSpin) {
+                spinOffset = (spinOffset + spinSpeed * Time.deltaTime) % 360;
+            }
+            var pos = GetLayeredPositionsAround(interactable.transform.position, interactDistances, numberOfFollowers, angleOffsets, spinOffset);
+            for (int i = 0; i < followers.Count; i++) {
+                var direction = pos[i] - followers[i].transform.position;
+                followers[i].rb.velocity = atPlayerSpeed * (direction.magnitude > 1 ? direction.normalized : direction);
+            }
         }
     }
 
-    private List<Vector3> GetLayeredPositionsAround(Vector3 center, float[] distances, int[] positions, float[] angleOffsets) {
+    private void SwitchState(FollowerState newState) {
+        switch (newState) {
+            case FollowerState.Returning:
+                foreach (var follower in followers) {
+                    follower.col.enabled = false;
+                }
+
+                chargeTimer = Cooldown.Wait(chargeDuration).OnComplete(() => {
+                    SwitchState(FollowerState.AtPlayer);
+                });
+
+                break;
+            case FollowerState.AtPlayer:
+                foreach (var follower in followers) {
+                    follower.col.enabled = true;
+                }
+                break;
+        }
+
+        state = newState;
+    }
+
+    private List<Vector3> GetLayeredPositionsAround(Vector3 center, float[] distances, int[] positions, float[] angleOffsets, float additionalOffset = 0) {
         List<Vector3> pos = new();
         for (int i = 0; i < distances.Length; i++) {
-            pos.AddRange(GetPositionsAround(center, distances[i], positions[i], angleOffsets[i]));
+            pos.AddRange(GetPositionsAround(center, distances[i], positions[i], angleOffsets[i] + additionalOffset));
         }
         return pos;
     }
@@ -112,5 +151,28 @@ public class FollowerManager : MonoBehaviour {
 
     private void OnDrawGizmos() {
         Handles.Label(transform.position, state.ToString());
+    }
+
+    public void Interact(FollowerInteractable interactable) {
+        if (state != FollowerState.Charging) return;
+        chargeTimer?.Stop();
+        this.interactable = interactable;
+        interactDistances = chargeDistances.Select(d => d + interactable.distance).ToArray();
+
+        if (interactable.shouldSpin) {
+            foreach (var follower in followers) {
+                follower.col.enabled = false;
+            }
+        }
+
+        SwitchState(FollowerState.Interacting);
+
+        StartCoroutine(ExecuteInteraction(interactable));
+    }
+
+    private IEnumerator ExecuteInteraction(FollowerInteractable interactable) {
+        yield return interactable.Interact(this);
+
+        SwitchState(FollowerState.Returning);
     }
 }
