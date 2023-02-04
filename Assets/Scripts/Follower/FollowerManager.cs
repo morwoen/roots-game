@@ -28,6 +28,7 @@ public class FollowerManager : MonoBehaviour {
     [Header("Charging")]
     [SerializeField] private float chargeDuration;
     [SerializeField] private float[] chargeDistances;
+    [SerializeField] private Transform chargeTelegraph;
     private Vector3 chargeDirection;
     private Cooldown chargeTimer;
     private List<Vector3> chargePositionOffsets;
@@ -44,6 +45,7 @@ public class FollowerManager : MonoBehaviour {
     [Header("Other")]
     [SerializeField] private PlayerInputController input;
     [SerializeField] private Rigidbody2D playerRB;
+    [SerializeField] private Animator anim;
 
     private List<Follower> followers;
     private List<Vector3> basePositionOffsets;
@@ -72,10 +74,11 @@ public class FollowerManager : MonoBehaviour {
             for (int i = 0; i < followers.Count; i++) {
                 var destination = pos + basePositionOffsets[i % basePositionOffsets.Count];
                 var direction = destination - followers[i].transform.position;
-                followers[i].rb.velocity = atPlayerSpeed * (direction.magnitude > .1 ? direction.normalized : direction);
+                followers[i].UpdateVelocity(atPlayerSpeed * (direction.magnitude > .1 ? direction.normalized : direction));
             }
 
             if (input.Attack) {
+                anim.SetTrigger("Attack");
                 input.AttackPerformed();
                 SwitchState(FollowerState.Charging);
                 chargeDirection = input.LookDirection.To2DV3();
@@ -91,12 +94,12 @@ public class FollowerManager : MonoBehaviour {
             for (int i = 0; i < followers.Count; i++) {
                 var destination = pos + basePositionOffsets[i % basePositionOffsets.Count];
                 var direction = destination - followers[i].transform.position;
-                followers[i].rb.velocity = returningSpeed * (direction.magnitude > 1 ? direction.normalized : direction);
+                followers[i].UpdateVelocity(returningSpeed * (direction.magnitude > 1 ? direction.normalized : direction));
             }
         } else if (state == FollowerState.Charging) {
             for (int i = 0; i < followers.Count; i++) {
                 var direction = chargePositionOffsets[i] - followers[i].transform.position;
-                followers[i].rb.velocity = returningSpeed * (direction.magnitude > 1 ? direction.normalized : direction);
+                followers[i].UpdateVelocity(returningSpeed * (direction.magnitude > 1 ? direction.normalized : direction));
             }
         } else if (state == FollowerState.Interacting) {
             if (interactable.shouldSpin) {
@@ -108,7 +111,7 @@ public class FollowerManager : MonoBehaviour {
 
             for (int i = 0; i < followers.Count; i++) {
                 var direction = pos[i] - followers[i].transform.position;
-                followers[i].rb.velocity = atPlayerSpeed * (direction.magnitude > easeInAtMagnetude ? direction.normalized : direction);
+                followers[i].UpdateVelocity(atPlayerSpeed * (direction.magnitude > easeInAtMagnetude ? direction.normalized : direction));
             }
 
             if (interactable is FollowerPickup) {

@@ -103,6 +103,18 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -5603,12 +5615,12 @@ TextureImporter:
       Tileset_154: -580039902
       Tileset_206: 2030042275
       Tileset_112: 1375707261
+      Tileset_240: -106302117
       Tileset_246: -1774657208
-      Tileset_197: 1219502981
       Tileset_116: -1871501596
       Tileset_85: -1365331757
       Tileset_212: -486609959
-      Tileset_240: -106302117
+      Tileset_197: 1219502981
       Tileset_47: -2022143143
       Tileset_18: -944415175
       Tileset_192: 201813948
