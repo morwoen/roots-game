@@ -1,13 +1,10 @@
 using CooldownManagement;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Apple;
 using UnityEngine.InputSystem.Utilities;
-using static UnityEditor.PlayerSettings;
 
 public class FollowerManager : MonoBehaviour {
     public enum FollowerState {
@@ -37,6 +34,7 @@ public class FollowerManager : MonoBehaviour {
 
     [Header("Interacting")]
     [SerializeField] private float spinSpeed = 1;
+    [SerializeField] private Transform movementTelegraph;
     private FollowerInteractable interactable;
     private float[] interactDistances;
     private float spinOffset = 0;
@@ -106,6 +104,15 @@ public class FollowerManager : MonoBehaviour {
                 var direction = pos[i] - followers[i].transform.position;
                 followers[i].rb.velocity = atPlayerSpeed * (direction.magnitude > 1 ? direction.normalized : direction);
             }
+
+            if (interactable is FollowerPickup) {
+                if (input.LookDirection.magnitude == 0) {
+                    movementTelegraph.gameObject.SetActive(false);
+                } else {
+                    movementTelegraph.gameObject.SetActive(true);
+                    movementTelegraph.position = transform.position + input.LookDirection.To2DV3();
+                }
+            }
         }
     }
 
@@ -174,5 +181,9 @@ public class FollowerManager : MonoBehaviour {
         yield return interactable.Interact(this);
 
         SwitchState(FollowerState.Returning);
+    }
+
+    public void Spin() {
+        spinOffset = (spinOffset + 100) % 360;
     }
 }
