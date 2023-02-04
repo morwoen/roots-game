@@ -654,6 +654,7 @@ GameObject:
   m_Component:
   - component: {fileID: 445975441}
   - component: {fileID: 445975442}
+  - component: {fileID: 445975443}
   m_Layer: 0
   m_Name: MoveTelegraph
   m_TagString: Untagged
@@ -669,7 +670,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 445975440}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.77, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -717,7 +718,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -939973004, guid: 200b7bd8fdf7c9441a46ef03525ec05c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 57c55afe15528ec4295af26e4c625a63, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -728,6 +729,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &445975443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445975440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34797d59ac88e52478961e4fe7129942, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &485904550
 PrefabInstance:
   m_ObjectHideFlags: 0
