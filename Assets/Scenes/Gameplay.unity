@@ -239,6 +239,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shouldSpin: 1
   distance: 0.2
+  speed: 2
 --- !u!61 &300705283
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -470,6 +471,8 @@ MonoBehaviour:
   - 0.6
   spinSpeed: 45
   movementTelegraph: {fileID: 445975441}
+  maxMovementDistance: 3
+  maxRangeFromPlayer: 5
   input: {fileID: 306100698}
   playerRB: {fileID: 306100699}
 --- !u!1 &306856690

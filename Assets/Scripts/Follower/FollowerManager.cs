@@ -35,6 +35,8 @@ public class FollowerManager : MonoBehaviour {
     [Header("Interacting")]
     [SerializeField] private float spinSpeed = 1;
     [SerializeField] private Transform movementTelegraph;
+    [SerializeField] private float maxMovementDistance = 3;
+    [SerializeField] private float maxRangeFromPlayer = 5;
     private FollowerInteractable interactable;
     private float[] interactDistances;
     private float spinOffset = 0;
@@ -56,6 +58,7 @@ public class FollowerManager : MonoBehaviour {
     private void OnEnable() {
         followers = FindObjectsOfType<Follower>().ToList();
         basePositionOffsets = GetLayeredPositionsAround(Vector3.zero, distances, numberOfFollowers, angleOffsets);
+        movementTelegraph.gameObject.SetActive(false);
     }
 
     private void OnDisable() {
@@ -100,17 +103,30 @@ public class FollowerManager : MonoBehaviour {
                 spinOffset = (spinOffset + spinSpeed * Time.deltaTime) % 360;
             }
             var pos = GetLayeredPositionsAround(interactable.transform.position, interactDistances, numberOfFollowers, angleOffsets, spinOffset);
+
+            var easeInAtMagnetude = interactable is FollowerPickup ? .1f : 1;
+
             for (int i = 0; i < followers.Count; i++) {
                 var direction = pos[i] - followers[i].transform.position;
-                followers[i].rb.velocity = atPlayerSpeed * (direction.magnitude > 1 ? direction.normalized : direction);
+                followers[i].rb.velocity = atPlayerSpeed * (direction.magnitude > easeInAtMagnetude ? direction.normalized : direction);
             }
 
             if (interactable is FollowerPickup) {
+                var inter = (FollowerPickup)interactable;
+                if (Vector3.Distance(transform.position, interactable.transform.position) > maxRangeFromPlayer) {
+                    inter.Cancel();
+                }
+
                 if (input.LookDirection.magnitude == 0) {
                     movementTelegraph.gameObject.SetActive(false);
                 } else {
-                    movementTelegraph.gameObject.SetActive(true);
-                    movementTelegraph.position = transform.position + input.LookDirection.To2DV3();
+                    movementTelegraph.gameObject.SetActive(!inter.Moving);
+                    movementTelegraph.position = transform.position + input.LookDirection.To2DV3() * maxMovementDistance;
+
+                    if (input.Attack) {
+                        input.AttackPerformed();
+                        inter.MoveTo(movementTelegraph.position);
+                    }
                 }
             }
         }
@@ -179,6 +195,8 @@ public class FollowerManager : MonoBehaviour {
 
     private IEnumerator ExecuteInteraction(FollowerInteractable interactable) {
         yield return interactable.Interact(this);
+
+        movementTelegraph.gameObject.SetActive(false);
 
         SwitchState(FollowerState.Returning);
     }
