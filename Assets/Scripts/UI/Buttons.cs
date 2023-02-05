@@ -3,24 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Buttons : MonoBehaviour
-{
-  private string sceneToLoad;
-  public GameObject canv;
-  private bool canvBool = false;
-   public void QuitGame()
-  {
-    Application.Quit();
-    Debug.Log("Quit Game");
-  }
+public class Buttons : MonoBehaviour {
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private GameObject quitButton;
+    private void Awake() {
+#if UNITY_WEBGL
+        Destroy(quitButton);
+#endif
+    }
 
-  public void PlayGame()
-  {
-    sceneToLoad = "Gameplay";
-    SceneManager.LoadScene(sceneToLoad);
-  }
+    public void QuitGame() {
+        audioSource.Play();
+        Application.Quit();
+    }
 
-  private void OnEnable()
+    public void PlayGame() {
+        audioSource.Play();
+        SceneManager.LoadScene(1);
+    }
+
+private void OnEnable()
   {
     InputManager.Instance.Player.OpenPauseMenu.performed += OpenPauseMenu_performed;
   }
