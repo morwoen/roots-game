@@ -14,6 +14,9 @@ public class FollowerManager : MonoBehaviour {
         Interacting,
     }
 
+    public delegate void OnFollowerChange();
+    public event OnFollowerChange onFollowerChange;
+
     [Header("Movement Speeds")]
     [SerializeField] private float atPlayerSpeed = 1;
     [SerializeField] private float returningSpeed = 1;
@@ -46,6 +49,7 @@ public class FollowerManager : MonoBehaviour {
     [SerializeField] private PlayerInputController input;
     [SerializeField] private Rigidbody2D playerRB;
     [SerializeField] private Animator anim;
+    [SerializeField] private Follower followerPrefab;
 
     private List<Follower> followers;
     private List<Vector3> basePositionOffsets;
@@ -53,12 +57,13 @@ public class FollowerManager : MonoBehaviour {
 
     public int ActiveFollowers {
         get {
-            return followers.Count;
+            return followers == null ? 0 : followers.Count;
         }
     }
 
     private void OnEnable() {
         followers = FindObjectsOfType<Follower>().ToList();
+        onFollowerChange?.Invoke();
         basePositionOffsets = GetLayeredPositionsAround(Vector3.zero, distances, numberOfFollowers, angleOffsets);
         movementTelegraph.gameObject.SetActive(false);
     }
@@ -106,6 +111,11 @@ public class FollowerManager : MonoBehaviour {
                 followers[i].UpdateVelocity(returningSpeed * (direction.magnitude > 1 ? direction.normalized : direction));
             }
         } else if (state == FollowerState.Interacting) {
+            if (!interactable) {
+                SwitchState(FollowerState.Returning);
+                return;
+            }
+
             if (interactable.shouldSpin) {
                 spinOffset = (spinOffset + spinSpeed * Time.deltaTime) % 360;
             }
@@ -212,5 +222,20 @@ public class FollowerManager : MonoBehaviour {
 
     public void Spin() {
         spinOffset = (spinOffset + 100) % 360;
+    }
+
+    public void SpawnFollower(Vector3 position) {
+        var follower = Instantiate(followerPrefab, position, Quaternion.identity);
+        Cooldown.Wait(1).Always(() => {
+            followers.Add(follower);
+            onFollowerChange?.Invoke();
+        });
+    }
+
+    public void TeleportFollowers() {
+        for (int i = 0; i < followers.Count; i++) {
+            var destination = transform.position + basePositionOffsets[i % basePositionOffsets.Count];
+            followers[i].transform.position = destination;
+        }
     }
 }

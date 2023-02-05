@@ -1,30 +1,56 @@
+using CooldownManagement;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FollowerOpen : FollowerInteractable {
-    [SerializeField] private Sprite openSprite;
-    [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Collider2D col;
     [SerializeField] private int followersRequired;
+    [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private Image lockImage;
+    [SerializeField] private GameObject vines;
+
+    private Cooldown colorReset;
+
+    private void OnEnable() {
+        text.SetText(followersRequired.ToString());
+        if (followersRequired == 0) {
+            Destroy(lockImage.gameObject);
+            Destroy(text.gameObject);
+        }
+    }
 
     public override IEnumerator Interact(FollowerManager manager) {
         yield return new WaitForSeconds(1);
 
         if (manager.ActiveFollowers < followersRequired) {
-            // TODO: Feedback
+            text.color = Color.red;
+            lockImage.color = Color.red;
+
+            colorReset = Cooldown.Wait(3).Always(() => {
+                text.color = Color.white;
+                lockImage.color = Color.white;
+            });
+
             yield break;
         }
 
         yield return new WaitForSeconds(1);
 
-        spriteRenderer.sprite = openSprite;
+        colorReset?.Stop();
+        if (lockImage) {
+            Destroy(lockImage.gameObject);
+        }
+        if (text) {
+            Destroy(text.gameObject);
+        }
+        Destroy(vines);
         col.enabled = false;
     }
 
     private void Reset() {
         col = GetComponent<Collider2D>();
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 }

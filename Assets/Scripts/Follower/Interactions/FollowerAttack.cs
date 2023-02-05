@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FollowerAttack : FollowerInteractable {
+    [SerializeField] private bool yieldFollower = false;
+
     private int damage = 5;
 
     public override IEnumerator Interact(FollowerManager manager) {
@@ -11,6 +13,10 @@ public class FollowerAttack : FollowerInteractable {
 
         manager.Spin();
         if (health.Damage(damage)) {
+            if (yieldFollower) {
+                manager.SpawnFollower(transform.position);
+            }
+            yield return new WaitForSeconds(.8f);
             yield break;
         }
 
@@ -18,6 +24,10 @@ public class FollowerAttack : FollowerInteractable {
 
         manager.Spin();
         if (health.Damage(damage)) {
+            if (yieldFollower) {
+                manager.SpawnFollower(transform.position);
+            }
+            yield return new WaitForSeconds(.8f);
             yield break;
         }
 
@@ -25,6 +35,10 @@ public class FollowerAttack : FollowerInteractable {
 
         manager.Spin();
         if (health.Damage(damage)) {
+            if (yieldFollower) {
+                manager.SpawnFollower(transform.position);
+            }
+            yield return new WaitForSeconds(.8f);
             yield break;
         }
 

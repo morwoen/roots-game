@@ -5,10 +5,14 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour {
     [SerializeField] private int maxHealth = 100;
+    [SerializeField] private HealthBar healthBar;
     private int currentHealth;
 
     private void OnEnable() {
         currentHealth = maxHealth;
+        if (healthBar) {
+            healthBar.Set(1);
+        }
     }
 
     public bool Damage(int damage) {
@@ -20,10 +24,10 @@ public class EnemyHealth : MonoBehaviour {
             return true;
         }
 
-        return false;
-    }
+        if (healthBar) {
+            healthBar.Set(currentHealth / (float)maxHealth);
+        }
 
-    private void OnDrawGizmos() {
-        Handles.Label(transform.position, currentHealth.ToString());
+        return false;
     }
 }
