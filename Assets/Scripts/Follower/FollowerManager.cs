@@ -71,6 +71,10 @@ public class FollowerManager : MonoBehaviour {
         onFollowerChange?.Invoke();
         basePositionOffsets = GetLayeredPositionsAround(Vector3.zero, distances, numberOfFollowers, angleOffsets);
         movementTelegraph.gameObject.SetActive(false);
+
+        foreach (var follower in followers) {
+            follower.col.enabled = false;
+        }
     }
 
     private void OnDisable() {
@@ -168,12 +172,10 @@ public class FollowerManager : MonoBehaviour {
                 });
 
                 break;
-            case FollowerState.AtPlayer:
+            case FollowerState.Charging:
                 foreach (var follower in followers) {
                     follower.col.enabled = true;
                 }
-                break;
-            case FollowerState.Charging:
                 audioSource.PlayOneShot(chargeClip);
                 break;
         }
@@ -199,10 +201,6 @@ public class FollowerManager : MonoBehaviour {
             pos.Add(center + dir * distance);
         }
         return pos;
-    }
-
-    private void OnDrawGizmos() {
-        Handles.Label(transform.position, state.ToString());
     }
 
     public void Interact(FollowerInteractable interactable) {

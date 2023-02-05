@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 7442184639272574668}
   - component: {fileID: 2122234385}
   m_Layer: 0
-  m_Name: Pickup
+  m_Name: Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -283,13 +283,13 @@ MonoBehaviour:
   shouldSpin: 1
   distance: 0.2
   speed: 2
-  followersRequired: 5
+  followersRequired: 0
   text: {fileID: 7442184639780638822}
   lockImage: {fileID: 7442184639872838331}
   audioSource: {fileID: 2122234385}
   pickUpSound: {fileID: 8300000, guid: 9ae46ef872c06aa49a51eeb9ab60d2e5, type: 3}
   dropSound: {fileID: 8300000, guid: 107408f4a607b914c814f6233b9b901b, type: 3}
-  notEnoughFollowersClip: {fileID: 8300000, guid: 3ed3f4953fc29914b8847d73f9482f22, type: 3}
+  notEnoughFollowersClip: {fileID: 8300000, guid: 969d311effedfa749aa835cc908e361c, type: 3}
 --- !u!82 &2122234385
 AudioSource:
   m_ObjectHideFlags: 0

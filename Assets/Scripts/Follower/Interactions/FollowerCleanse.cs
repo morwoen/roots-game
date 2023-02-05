@@ -68,8 +68,4 @@ public class FollowerCleanse : FollowerInteractable {
         }
         isCleansed = true;
     }
-
-    private void OnDrawGizmos() {
-        Handles.Label(transform.position, isCleansed ? "Cleansed" : "Corrupted");
-    }
 }

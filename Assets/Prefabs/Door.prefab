@@ -103,7 +103,7 @@ MonoBehaviour:
   vines: {fileID: 282795848188100691}
   audioSource: {fileID: 1167442401}
   openClip: {fileID: 8300000, guid: b9c8607dd7937094a91be28f81648ab6, type: 3}
-  notEnoughFollowersClip: {fileID: 8300000, guid: 3ed3f4953fc29914b8847d73f9482f22, type: 3}
+  notEnoughFollowersClip: {fileID: 8300000, guid: 969d311effedfa749aa835cc908e361c, type: 3}
 --- !u!82 &1167442401
 AudioSource:
   m_ObjectHideFlags: 0
