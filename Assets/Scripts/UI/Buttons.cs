@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class Buttons : MonoBehaviour {
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private GameObject quitButton;
+  public GameObject canv;
+  private bool canvBool;
     private void Awake() {
 #if UNITY_WEBGL
         Destroy(quitButton);
