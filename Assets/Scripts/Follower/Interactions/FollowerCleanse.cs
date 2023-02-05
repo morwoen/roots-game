@@ -64,6 +64,7 @@ public class FollowerCleanse : FollowerInteractable {
             spriteRenderer.color = cleansedColor;
             Cooldown.Wait(1).OnComplete(() => {
                 rootRenderer.material = cleansedMaterial;
+                FindObjectOfType<EndGameMenu>().PoolCleansed();
             });
         }
         isCleansed = true;

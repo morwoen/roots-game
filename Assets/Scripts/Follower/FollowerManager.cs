@@ -202,7 +202,6 @@ public class FollowerManager : MonoBehaviour {
         }
         return pos;
     }
-
     public void Interact(FollowerInteractable interactable) {
         if (state != FollowerState.Charging) return;
         chargeTimer?.Stop();
