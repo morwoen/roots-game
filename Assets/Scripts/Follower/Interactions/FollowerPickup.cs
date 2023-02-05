@@ -10,6 +10,10 @@ public class FollowerPickup : FollowerInteractable {
     [SerializeField] private int followersRequired;
     [SerializeField] private TextMeshProUGUI text;
     [SerializeField] private Image lockImage;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip pickUpSound;
+    [SerializeField] private AudioClip dropSound;
+    [SerializeField] private AudioClip notEnoughFollowersClip;
 
     public bool Moving { get; set; } = false;
 
@@ -36,6 +40,8 @@ public class FollowerPickup : FollowerInteractable {
                 lockImage.color = Color.white;
             });
 
+            audioSource.PlayOneShot(notEnoughFollowersClip);
+
             yield break;
         }
 
@@ -47,10 +53,12 @@ public class FollowerPickup : FollowerInteractable {
             Destroy(text.gameObject);
         }
 
+        audioSource.PlayOneShot(pickUpSound);
         while (!destinationReached) {
             yield return new WaitForEndOfFrame();
         }
 
+        audioSource.PlayOneShot(dropSound);
         destinationReached = false;
     }
 

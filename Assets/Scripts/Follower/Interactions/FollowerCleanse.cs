@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class FollowerCleanse : FollowerInteractable {
@@ -13,6 +14,11 @@ public class FollowerCleanse : FollowerInteractable {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Color corruptedColor;
     [SerializeField] private Color cleansedColor;
+    [SerializeField] private Material cleansedMaterial;
+    [SerializeField] private TilemapRenderer rootRenderer;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip cleanseClip;
+    [SerializeField] private AudioClip notEnoughFollowersClip;
 
     private bool isCleansed = false;
     private Cooldown colorReset;
@@ -29,7 +35,7 @@ public class FollowerCleanse : FollowerInteractable {
     public override IEnumerator Interact(FollowerManager manager) {
         yield return new WaitForSeconds(1);
 
-        if (isCleansed || manager.ActiveFollowers < followersRequired) {
+        if (!isCleansed && manager.ActiveFollowers < followersRequired) {
             text.color = Color.red;
             lockImage.color = Color.red;
 
@@ -37,6 +43,9 @@ public class FollowerCleanse : FollowerInteractable {
                 text.color = Color.white;
                 lockImage.color = Color.white;
             });
+
+            audioSource.PlayOneShot(notEnoughFollowersClip);
+
             yield break;
         }
 
@@ -50,7 +59,13 @@ public class FollowerCleanse : FollowerInteractable {
 
         yield return new WaitForSeconds(2);
 
-        spriteRenderer.color = cleansedColor;
+        if (!isCleansed) {
+            audioSource.PlayOneShot(cleanseClip);
+            spriteRenderer.color = cleansedColor;
+            Cooldown.Wait(1).OnComplete(() => {
+                rootRenderer.material = cleansedMaterial;
+            });
+        }
         isCleansed = true;
     }
 

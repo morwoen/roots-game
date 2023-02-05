@@ -11,6 +11,9 @@ public class FollowerOpen : FollowerInteractable {
     [SerializeField] private TextMeshProUGUI text;
     [SerializeField] private Image lockImage;
     [SerializeField] private GameObject vines;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip openClip;
+    [SerializeField] private AudioClip notEnoughFollowersClip;
 
     private Cooldown colorReset;
 
@@ -34,6 +37,8 @@ public class FollowerOpen : FollowerInteractable {
                 lockImage.color = Color.white;
             });
 
+            audioSource.PlayOneShot(notEnoughFollowersClip);
+
             yield break;
         }
 
@@ -47,6 +52,7 @@ public class FollowerOpen : FollowerInteractable {
             Destroy(text.gameObject);
         }
         Destroy(vines);
+        audioSource.PlayOneShot(openClip);
         col.enabled = false;
     }
 

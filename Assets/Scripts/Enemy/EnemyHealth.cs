@@ -6,6 +6,7 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour {
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private HealthBar healthBar;
+    [SerializeField] private GameObject deathAudio;
     private int currentHealth;
 
     private void OnEnable() {
@@ -20,6 +21,9 @@ public class EnemyHealth : MonoBehaviour {
         if (currentHealth <= 0) {
             currentHealth = 0;
 
+            if (deathAudio) {
+                Instantiate(deathAudio, transform.position, transform.rotation);
+            }
             Destroy(gameObject);
             return true;
         }

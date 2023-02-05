@@ -18,6 +18,10 @@ public class EnemyController : MonoBehaviour {
     [SerializeField] private float attackCooldown = 1;
     [SerializeField] private float attackPrep = .5f;
     [SerializeField] private float attackDuration = 1;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private bool spriteLookingLeft;
+    [SerializeField] private Animator anim;
+    [SerializeField] private AudioSource audioSource;
 
 
     private Vector3 origin;
@@ -38,6 +42,8 @@ public class EnemyController : MonoBehaviour {
     private void Update() {
         if (state == EnemyState.Attacking) {
             rb.velocity = speed * target.normalized;
+            spriteRenderer.flipX = (spriteLookingLeft && rb.velocity.x > 0) || (!spriteLookingLeft && rb.velocity.x < 0);
+            anim.SetFloat("Velocity", rb.velocity.magnitude);
         } else {
             rb.velocity = Vector3.zero;
         }
@@ -49,6 +55,8 @@ public class EnemyController : MonoBehaviour {
             cd = Cooldown.Wait(attackCooldown).OnComplete(() => {
                 target = player.transform.position - transform.position;
                 cd = Cooldown.Wait(attackPrep).OnComplete(() => {
+                    anim.SetTrigger("Attack");
+                    audioSource.Play();
                     SwitchState(EnemyState.Attacking);
                 });
             });

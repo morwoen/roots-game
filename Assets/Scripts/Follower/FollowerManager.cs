@@ -45,6 +45,11 @@ public class FollowerManager : MonoBehaviour {
     private float[] interactDistances;
     private float spinOffset = 0;
 
+    [Header("Sound")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip chargeClip;
+    [SerializeField] private AudioClip returnClip;
+
     [Header("Other")]
     [SerializeField] private PlayerInputController input;
     [SerializeField] private Rigidbody2D playerRB;
@@ -152,6 +157,8 @@ public class FollowerManager : MonoBehaviour {
     private void SwitchState(FollowerState newState) {
         switch (newState) {
             case FollowerState.Returning:
+                audioSource.PlayOneShot(returnClip);
+
                 foreach (var follower in followers) {
                     follower.col.enabled = false;
                 }
@@ -165,6 +172,9 @@ public class FollowerManager : MonoBehaviour {
                 foreach (var follower in followers) {
                     follower.col.enabled = true;
                 }
+                break;
+            case FollowerState.Charging:
+                audioSource.PlayOneShot(chargeClip);
                 break;
         }
 
