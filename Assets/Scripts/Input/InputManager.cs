@@ -84,7 +84,7 @@ public class InputManager : MonoBehaviour {
         public InputAction Attack { get { return inputActions.FindAction("Attack"); } }
         //public InputAction Dash { get { return inputActions.FindAction("Dash"); } }
         //public InputAction Interact { get { return inputActions.FindAction("Interact"); } }
-        //public InputAction OpenPauseMenu { get { return inputActions.FindAction("OpenPauseMenu"); } }
+        public InputAction OpenPauseMenu { get { return inputActions.FindAction("Open Pause Menu"); } }
     }
 
     public class MenuActionMap : InternalActionMap {
