@@ -88,7 +88,7 @@ public class FollowerManager : MonoBehaviour {
             chargeTelegraph.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
             // Move followers
-            var pos = transform.position + input.LookDirection.To2DV3() * directedDistanceFromPlayer;
+            var pos = transform.position + input.LookDirection.To2DV3().normalized * directedDistanceFromPlayer;
             for (int i = 0; i < followers.Count; i++) {
                 var destination = pos + basePositionOffsets[i % basePositionOffsets.Count];
                 var direction = destination - followers[i].transform.position;
@@ -99,9 +99,10 @@ public class FollowerManager : MonoBehaviour {
                 anim.SetTrigger("Attack");
                 input.AttackPerformed();
                 SwitchState(FollowerState.Charging);
-                chargeDirection = input.LookDirection.To2DV3();
+                chargeDirection = input.LookDirection.To2DV3().normalized;
                 var point = transform.position + chargeDirection * (chargingSpeed * chargeDuration);
                 chargePositionOffsets = GetLayeredPositionsAround(point, chargeDistances, numberOfFollowers, angleOffsets);
+                chargeTimer?.Stop();
                 chargeTimer = Cooldown.Wait(chargeDuration).OnComplete(() => {
                     SwitchState(FollowerState.Returning);
                 });

@@ -7,7 +7,16 @@ public static class ExtensionMethods {
     }
 
     public static Vector2 Remap(this Vector2 value, Vector2 fromRangeStart, Vector2 fromRangeEnd, Vector2 toRangeStart, Vector2 toRangeEnd) {
-        return toRangeStart + (value - fromRangeStart) * (toRangeEnd - toRangeStart) / (fromRangeEnd - fromRangeStart);
+        var div = fromRangeEnd - fromRangeStart;
+        if (div.x == 0) {
+            div.x = 1;
+        }
+
+        if (div.y == 0) {
+            div.y = 1;
+        }
+
+        return toRangeStart + (value - fromRangeStart) * (toRangeEnd - toRangeStart) / div;
     }
 
     public static Vector3 RandomPointInCircle(this float maxDistance, float minimumDistance = 0, float y = 0) {
